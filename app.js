@@ -4,12 +4,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import contactsRouter from "./routes/contactsRouter.js";
+import globalErrorHandler from "./controllers/errorController.js";
 
 dotenv.config();
 
 const app = express();
 
-app.use(morgan("tiny"));
+// MIDDLEWARE
+if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
+
+// BUILT-IN
 app.use(cors());
 app.use(express.json());
 
@@ -18,14 +22,12 @@ const pathPrefix = "/api/v1";
 
 app.use(`${pathPrefix}/contacts`, contactsRouter);
 
-app.use((_, res) => {
+// handle not found error
+app.all("*", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-app.use((err, req, res, next) => {
-  const { status = 500, message = "Server error" } = err;
-  res.status(status).json({ message });
-});
+app.use(globalErrorHandler);
 
 // SERVER INIT
 const port = +process.env.PORT || 3001;

@@ -1,3 +1,4 @@
+import HttpError from "../helpers/HttpError.js";
 import contactsService from "../services/contactsServices.js";
 
 export const checkContactId = async (req, res, next) => {
@@ -9,18 +10,13 @@ export const checkContactId = async (req, res, next) => {
     const contact = contactsDB.find((c) => c.id === id);
 
     if (!contact) {
-      return res.status(404).json({
-        msg: "Not found",
-      });
+      throw HttpError(404, "Contact not found");
     }
 
     req.contact = contact;
 
     next();
   } catch (error) {
-    console.error(colors.red("internal server error: "), error.message);
-    res.status(500).json({
-      msg: "internal server error...",
-    });
+    next(error);
   }
 };
