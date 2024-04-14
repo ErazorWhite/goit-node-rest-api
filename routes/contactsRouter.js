@@ -4,22 +4,24 @@ import {
   getOneContact,
   deleteContact,
   createContact,
-  updateContact,
+  changeContact,
 } from "../controllers/contactsControllers.js";
 import { checkContactId } from "../middlewares/contactMiddlewares.js";
-import { createContactSchema, updateContactSchema } from "../schemas/contactsSchemas.js";
+import {
+  createContactSchema,
+  updateContactSchema,
+} from "../schemas/contactsSchemas.js";
 import validateBody from "../helpers/validateBody.js";
 
 const contactsRouter = Router();
-contactsRouter
-  .route("/")
-  .post(validateBody(createContactSchema), createContact)
-  .get(getAllContacts);
+
+contactsRouter.get("/", getAllContacts);
+contactsRouter.post("/", validateBody(createContactSchema), createContact);
+
 contactsRouter.use("/:id", checkContactId);
-contactsRouter
-  .route("/:id")
-  .get(getOneContact)
-  .put(validateBody(updateContactSchema), updateContact)
-  .delete(deleteContact);
+
+contactsRouter.get("/:id", getOneContact);
+contactsRouter.delete("/:id", deleteContact);
+contactsRouter.put("/:id", validateBody(updateContactSchema), changeContact);
 
 export default contactsRouter;

@@ -1,6 +1,11 @@
 import Joi from "joi";
 
-import { isValidPhoneInput } from "../services/contactsServices.js";
+function isValidPhoneInput(input) {
+  return (
+    /^(\(\d{3}\)\s?\d{3}-\d{4})$/.test(input.trim()) || // Matches (XXX) XXX-XXXX
+    /^\d{3}-\d{2}-\d{2}$/.test(input.trim()) // Matches XXX-XX-XX
+  );
+}
 
 export const createContactSchema = Joi.object()
   .options({ abortEarly: false })
@@ -11,7 +16,7 @@ export const createContactSchema = Joi.object()
       .custom((value, helpers) => {
         if (!isValidPhoneInput(value)) {
           return helpers.error(
-            "Phone should matches (XXX) XXX-XXXX or XXX-XX-XX format",
+            "Phone should match (XXX) XXX-XXXX or XXX-XX-XX format",
             { value }
           );
         }
@@ -28,7 +33,7 @@ export const updateContactSchema = Joi.object({
     .custom((value, helpers) => {
       if (value && !isValidPhoneInput(value)) {
         return helpers.error(
-          "Phone should matches (XXX) XXX-XXXX or XXX-XX-XX format",
+          "Phone should match (XXX) XXX-XXXX or XXX-XX-XX format",
           { value }
         );
       }

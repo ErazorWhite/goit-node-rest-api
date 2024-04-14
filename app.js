@@ -4,7 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import contactsRouter from "./routes/contactsRouter.js";
-import globalErrorHandler from "./controllers/errorController.js";
+import globalErrorHandler from "./middlewares/errorHandler.js";
 
 dotenv.config();
 

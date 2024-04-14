@@ -7,7 +7,7 @@ const contactsPath = path.resolve("db", "contacts.json");
 
 const contactsService = {};
 
-contactsService.listContacts = async () => {
+export const listContacts = async () => {
   try {
     const readResult = await fs.readFile(contactsPath, { encoding: "utf-8" });
 
@@ -18,9 +18,9 @@ contactsService.listContacts = async () => {
   }
 };
 
-contactsService.getContactById = async (contactId) => {
+export const getContactById = async (contactId) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
 
     const requiredContact = contacts?.find(
       (contact) => contact.id === contactId
@@ -33,9 +33,9 @@ contactsService.getContactById = async (contactId) => {
   }
 };
 
-contactsService.removeContact = async (contactId) => {
+export const removeContact = async (contactId) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
 
     if (!contacts) return null;
 
@@ -55,11 +55,9 @@ contactsService.removeContact = async (contactId) => {
   }
 };
 
-contactsService.addContact = async ({ name, email, phone }) => {
-  if (!isValidContact(name, email, phone)) return null;
-
+export const addContact = async ({ name, email, phone }) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
 
     if (!contacts) return null;
 
@@ -81,12 +79,9 @@ contactsService.addContact = async ({ name, email, phone }) => {
   }
 };
 
-contactsService.updateContact = async ({ contactId, name, email, phone }) => {
-  if (email && !isValidEmail(email)) return null;
-  if (phone && !isValidPhoneInput(phone)) return null;
-
+export const updateContact = async ({ contactId, name, email, phone }) => {
   try {
-    const oldContact = await contactsService.getContactById(contactId);
+    const oldContact = await getContactById(contactId);
     if (!oldContact) return null;
 
     const updatedContact = {
@@ -96,37 +91,16 @@ contactsService.updateContact = async ({ contactId, name, email, phone }) => {
       phone: phone || oldContact.phone,
     };
 
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
     const index = contacts.findIndex((c) => c.id === contactId);
 
     contacts[index] = updatedContact;
 
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
-    return { oldContact, updatedContact };
+    return updatedContact;
   } catch (error) {
     console.error(colors.red("Error:"), error.message);
     return null;
   }
 };
-
-function isValidEmail(email) {
-  const re =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(email).toLowerCase());
-}
-
-export function isValidPhoneInput(input) {
-  return (
-    /^(\(\d{3}\)\s?\d{3}-\d{4})$/.test(input.trim()) || // Matches (XXX) XXX-XXXX
-    /^\d{3}-\d{2}-\d{2}$/.test(input.trim()) // Matches XXX-XX-XX
-  );
-}
-
-function isValidContact(name, email, phone) {
-  return (
-    name && email && phone && isValidEmail(email) && isValidPhoneInput(phone)
-  );
-}
-
-export default contactsService;
