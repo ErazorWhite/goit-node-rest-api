@@ -1,7 +1,7 @@
 import catchAsync from "../helpers/catchAsync.js";
 import contactsService from "../services/contactsServices.js";
 
-export const getAllContacts = catchAsync(async (req, res) => {
+export const getAllContacts = catchAsync(async (_req, res) => {
   const contactsDB = await contactsService.listContacts();
   res.status(200).json({
     contactsDB,
