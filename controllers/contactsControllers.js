@@ -1,12 +1,12 @@
+import catchAsync from "../helpers/catchAsync.js";
 import contactsService from "../services/contactsServices.js";
 
-export const getAllContacts = async (req, res) => {
+export const getAllContacts = catchAsync(async (req, res) => {
   const contactsDB = await contactsService.listContacts();
-
   res.status(200).json({
     contactsDB,
   });
-};
+});
 
 export const getOneContact = (req, res) => {
   const contact = req.contact;
@@ -15,24 +15,24 @@ export const getOneContact = (req, res) => {
   });
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = catchAsync(async (req, res) => {
   const contactId = req.contact.id;
   const deleteContact = await contactsService.removeContact(contactId);
   res.status(200).json({
     deleteContact,
   });
-};
+});
 
-export const createContact = async (req, res) => {
+export const createContact = catchAsync(async (req, res) => {
   const newContact = req.body;
   const createNewContact = await contactsService.addContact(newContact);
 
   res.status(200).json({
     createNewContact,
   });
-};
+});
 
-export const updateContact = async (req, res) => {
+export const updateContact = catchAsync(async (req, res) => {
   const contactId = req.contact.id;
   const updateContact = await contactsService.updateContact({
     contactId,
@@ -41,4 +41,4 @@ export const updateContact = async (req, res) => {
   res.status(200).json({
     updateContact,
   });
-};
+});
