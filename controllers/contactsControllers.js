@@ -9,15 +9,16 @@ export const getAllContacts = catchAsync(async (_req, res) => {
 });
 
 export const getOneContact = (req, res) => {
-  const contact = req.contact;
+  const contact = req.contact; // from middleware
   res.status(200).json({
     contact,
   });
 };
 
 export const deleteContact = catchAsync(async (req, res) => {
-  const contactId = req.contact.id;
+  const contactId = req.contact.id; // from middleware
   const deleteContact = await contactsService.removeContact(contactId);
+
   res.status(200).json({
     deleteContact,
   });
@@ -27,17 +28,18 @@ export const createContact = catchAsync(async (req, res) => {
   const newContact = req.body;
   const createNewContact = await contactsService.addContact(newContact);
 
-  res.status(200).json({
+  res.status(201).json({
     createNewContact,
   });
 });
 
 export const updateContact = catchAsync(async (req, res) => {
-  const contactId = req.contact.id;
+  const contactId = req.contact.id; // from middleware
   const updateContact = await contactsService.updateContact({
     contactId,
     ...req.body,
   });
+
   res.status(200).json({
     updateContact,
   });

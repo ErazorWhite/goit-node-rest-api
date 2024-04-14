@@ -82,7 +82,8 @@ contactsService.addContact = async ({ name, email, phone }) => {
 };
 
 contactsService.updateContact = async ({ contactId, name, email, phone }) => {
-  if (!isValidContact(name, email, phone)) return null;
+  if (email && !isValidEmail(email)) return null;
+  if (phone && !isValidPhoneInput(phone)) return null;
 
   try {
     const oldContact = await contactsService.getContactById(contactId);
@@ -90,9 +91,9 @@ contactsService.updateContact = async ({ contactId, name, email, phone }) => {
 
     const updatedContact = {
       id: oldContact.id,
-      name,
-      email,
-      phone,
+      name: name || oldContact.name,
+      email: email || oldContact.email,
+      phone: phone || oldContact.phone,
     };
 
     const contacts = await contactsService.listContacts();
@@ -109,13 +110,13 @@ contactsService.updateContact = async ({ contactId, name, email, phone }) => {
   }
 };
 
-function validateEmail(email) {
+function isValidEmail(email) {
   const re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 }
 
-function validatePhoneInput(input) {
+export function isValidPhoneInput(input) {
   return (
     /^(\(\d{3}\)\s?\d{3}-\d{4})$/.test(input.trim()) || // Matches (XXX) XXX-XXXX
     /^\d{3}-\d{2}-\d{2}$/.test(input.trim()) // Matches XXX-XX-XX
@@ -124,7 +125,7 @@ function validatePhoneInput(input) {
 
 function isValidContact(name, email, phone) {
   return (
-    name && email && phone && validateEmail(email) && validatePhoneInput(phone)
+    name && email && phone && isValidEmail(email) && isValidPhoneInput(phone)
   );
 }
 
