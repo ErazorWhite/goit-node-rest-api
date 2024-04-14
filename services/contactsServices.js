@@ -1,13 +1,16 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { nanoid } from "nanoid";
+import { v4 } from "uuid";
 import colors from "colors";
 
-const contactsPath = path.resolve("src", "db", "contacts.json");
+const contactsPath = path.resolve("db", "contacts.json");
 
-export const listContacts = async () => {
+const contactsService = {};
+
+contactsService.listContacts = async () => {
   try {
     const readResult = await fs.readFile(contactsPath, { encoding: "utf-8" });
+
     return JSON.parse(readResult);
   } catch (error) {
     console.error(colors.red("Error:"), error.message);
@@ -15,12 +18,14 @@ export const listContacts = async () => {
   }
 };
 
-export const getContactById = async (contactId) => {
+contactsService.getContactById = async (contactId) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await contactsService.listContacts();
+
     const requiredContact = contacts?.find(
       (contact) => contact.id === contactId
     );
+
     return requiredContact || null;
   } catch (error) {
     console.error(colors.red("Error:"), error.message);
@@ -28,15 +33,21 @@ export const getContactById = async (contactId) => {
   }
 };
 
-export const removeContact = async (contactId) => {
+contactsService.removeContact = async (contactId) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await contactsService.listContacts();
+
     if (!contacts) return null;
+
     const index =
       contacts?.findIndex((contact) => contact.id === contactId) || -1;
+
     if (index === -1) return null;
+
     const [removedContact] = contacts.splice(index, 1);
+
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
     return removedContact;
   } catch (error) {
     console.error(colors.red("Error:"), error.message);
@@ -44,28 +55,54 @@ export const removeContact = async (contactId) => {
   }
 };
 
-export const addContact = async ({ name, email, phone }) => {
-  if (
-    !name ||
-    !email ||
-    !phone ||
-    !validateEmail(email) ||
-    !validatePhoneInput(phone)
-  )
-    return null;
+contactsService.addContact = async ({ name, email, phone }) => {
+  if (!isValidContact(name, email, phone)) return null;
 
   try {
-    const contacts = await listContacts();
+    const contacts = await contactsService.listContacts();
+
     if (!contacts) return null;
+
     const newContact = {
-      id: nanoid(),
+      id: v4(),
       name,
       email,
       phone,
     };
+
     contacts.push(newContact);
+
     await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
     return newContact;
+  } catch (error) {
+    console.error(colors.red("Error:"), error.message);
+    return null;
+  }
+};
+
+contactsService.updateContact = async ({ contactId, name, email, phone }) => {
+  if (!isValidContact(name, email, phone)) return null;
+
+  try {
+    const oldContact = await contactsService.getContactById(contactId);
+    if (!oldContact) return null;
+
+    const updatedContact = {
+      id: oldContact.id,
+      name,
+      email,
+      phone,
+    };
+
+    const contacts = await contactsService.listContacts();
+    const index = contacts.findIndex((c) => c.id === contactId);
+
+    contacts[index] = updatedContact;
+
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+
+    return { oldContact, updatedContact };
   } catch (error) {
     console.error(colors.red("Error:"), error.message);
     return null;
@@ -84,3 +121,11 @@ function validatePhoneInput(input) {
     /^\d{3}-\d{2}-\d{2}$/.test(input.trim()) // Matches XXX-XX-XX
   );
 }
+
+function isValidContact(name, email, phone) {
+  return (
+    name && email && phone && validateEmail(email) && validatePhoneInput(phone)
+  );
+}
+
+export default contactsService;

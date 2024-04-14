@@ -6,17 +6,16 @@ import {
   createContact,
   updateContact,
 } from "../controllers/contactsControllers.js";
+import { checkContactId } from "../middlewares/contactMiddlewares.js";
 
 const contactsRouter = Router();
 
-contactsRouter.get("/", getAllContacts);
-
-contactsRouter.get("/:id", getOneContact);
-
-contactsRouter.delete("/:id", deleteContact);
-
-contactsRouter.post("/", createContact);
-
-contactsRouter.put("/:id", updateContact);
+contactsRouter.route("/").post(createContact).get(getAllContacts);
+contactsRouter.use("/:id", checkContactId);
+contactsRouter
+  .route("/:id")
+  .get(getOneContact)
+  .patch(updateContact)
+  .delete(deleteContact);
 
 export default contactsRouter;
