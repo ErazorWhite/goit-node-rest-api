@@ -1,11 +1,52 @@
-import contactsService from "../services/contactsServices.js";
+import catchAsync from "../helpers/catchAsync.js";
+import {
+  addContact,
+  listContacts,
+  removeContact,
+  updateContact,
+} from "../services/contactsServices.js";
 
-export const getAllContacts = (req, res) => {};
+export const getAllContacts = catchAsync(async (_req, res) => {
+  const contactsDB = await listContacts();
+  res.status(200).json({
+    contactsDB,
+  });
+});
 
-export const getOneContact = (req, res) => {};
+export const getOneContact = (req, res) => {
+  const contact = req.contact; // from middleware
+  res.status(200).json({
+    contact,
+  });
+};
 
-export const deleteContact = (req, res) => {};
+export const deleteContact = catchAsync(async (req, res) => {
+  const contactId = req.contact.id; // from middleware
+  const deleteContact = await removeContact(contactId);
 
-export const createContact = (req, res) => {};
+  res.status(200).json({
+    deleteContact,
+  });
+});
 
-export const updateContact = (req, res) => {};
+export const createContact = catchAsync(async (req, res) => {
+  const newContact = req.body;
+  const createNewContact = await addContact(newContact);
+  if (!createNewContact) throw HttpError(500, "Can't create user");
+  
+  res.status(201).json({
+    createNewContact,
+  });
+});
+
+export const changeContact = catchAsync(async (req, res) => {
+  const contactId = req.contact.id; // from middleware
+  const updatedContact = await updateContact({
+    contactId,
+    ...req.body,
+  });
+
+  res.status(200).json({
+    updatedContact,
+  });
+});
