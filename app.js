@@ -2,6 +2,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import globalErrorHandler from "./middlewares/errorHandler.js";
@@ -9,6 +10,17 @@ import globalErrorHandler from "./middlewares/errorHandler.js";
 dotenv.config();
 
 const app = express();
+
+// DATABASE
+mongoose
+  .connect(process.env.MONGODB_URL)
+  .then(() => {
+    console.log("Database connection successful");
+  })
+  .catch((err) => {
+    console.log(err);
+    process.exit(1);
+  });
 
 // MIDDLEWARE
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
