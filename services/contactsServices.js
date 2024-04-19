@@ -1,8 +1,5 @@
-import * as path from "path";
 import { Contact } from "../models/contactModel.js";
 import { catchAsyncService } from "../helpers/catchAsync.js";
-
-const contactsPath = path.resolve("db", "contacts.json");
 
 export const listContacts = catchAsyncService(async () => {
   return await Contact.find();
@@ -25,6 +22,16 @@ export const updateContact = catchAsyncService(
     return await Contact.findByIdAndUpdate(
       { _id: id },
       { name, email, phone },
+      { new: true }
+    );
+  }
+);
+
+export const updateStatusContact = catchAsyncService(
+  async ({ id, favorite }) => {
+    return await Contact.findByIdAndUpdate(
+      { _id: id },
+      { favorite },
       { new: true }
     );
   }

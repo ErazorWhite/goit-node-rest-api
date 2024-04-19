@@ -4,6 +4,7 @@ import {
   listContacts,
   removeContact,
   updateContact,
+  updateStatusContact,
 } from "../services/contactsServices.js";
 
 export const getAllContacts = catchAsync(async (_req, res) => {
@@ -48,5 +49,17 @@ export const changeContact = catchAsync(async (req, res) => {
 
   res.status(200).json({
     updatedContact,
+  });
+});
+
+export const changeContactStatus = catchAsync(async (req, res) => {
+  const id = req.contact.id; // from middleware
+  const updatedContactStatus = await updateStatusContact({
+    id,
+    ...req.body,
+  });
+
+  res.status(200).json({
+    updatedContactStatus,
   });
 });

@@ -49,3 +49,10 @@ export const updateContactSchema = Joi.object({
     abortEarly: false,
   })
   .or("name", "phone", "email");
+
+export const updateContactStatusSchema = Joi.object({
+  favorite: Joi.bool().required(),
+})
+  .options({
+    abortEarly: false,
+  })
