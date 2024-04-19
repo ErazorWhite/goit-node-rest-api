@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { phoneRegexp } from "../constants/regexp.js";
+import { MAXNAME_L, MINNAME_L, MINPHONE_L } from "../constants/customValues.js";
 
 function isValidPhoneInput(input) {
   return (
@@ -11,9 +12,9 @@ function isValidPhoneInput(input) {
 export const createContactSchema = Joi.object()
   .options({ abortEarly: false })
   .keys({
-    name: Joi.string().min(2).max(30).required(),
+    name: Joi.string().min(MINNAME_L).max(MAXNAME_L).required(),
     phone: Joi.string()
-      .min(9)
+      .min(MINPHONE_L)
       .custom((value, helpers) => {
         if (!isValidPhoneInput(value)) {
           return helpers.error(
@@ -25,6 +26,7 @@ export const createContactSchema = Joi.object()
       })
       .required(),
     email: Joi.string().email().required(),
+    favorite: Joi.bool(),
   });
 
 export const updateContactSchema = Joi.object({
@@ -41,6 +43,7 @@ export const updateContactSchema = Joi.object({
       return value;
     }),
   email: Joi.string().email(),
+  favorite: Joi.bool(),
 })
   .options({
     abortEarly: false,
