@@ -1,5 +1,5 @@
 import HttpError from "../helpers/HttpError.js";
-import catchAsync from "../helpers/catchAsync.js";
+import { catchAsync } from "../helpers/catchAsync.js";
 import { getContactById, listContacts } from "../services/contactsServices.js";
 
 export const checkContactId = catchAsync(async (req, _res, next) => {

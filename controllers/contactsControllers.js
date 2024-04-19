@@ -1,4 +1,4 @@
-import catchAsync from "../helpers/catchAsync.js";
+import { catchAsync } from "../helpers/catchAsync.js";
 import {
   addContact,
   listContacts,
@@ -21,8 +21,8 @@ export const getOneContact = (req, res) => {
 };
 
 export const deleteContact = catchAsync(async (req, res) => {
-  const contactId = req.contact.id; // from middleware
-  const deleteContact = await removeContact(contactId);
+  const id = req.contact.id; // from middleware
+  const deleteContact = await removeContact(id);
 
   res.status(200).json({
     deleteContact,
@@ -33,16 +33,16 @@ export const createContact = catchAsync(async (req, res) => {
   const newContact = req.body;
   const createNewContact = await addContact(newContact);
   if (!createNewContact) throw HttpError(500, "Can't create user");
-  
+
   res.status(201).json({
     createNewContact,
   });
 });
 
 export const changeContact = catchAsync(async (req, res) => {
-  const contactId = req.contact.id; // from middleware
+  const id = req.contact.id; // from middleware
   const updatedContact = await updateContact({
-    contactId,
+    id,
     ...req.body,
   });
 
