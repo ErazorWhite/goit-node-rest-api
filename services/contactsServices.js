@@ -5,34 +5,27 @@ export const listContacts = catchAsyncService(async () => {
   return await Contact.find();
 });
 
-export const getContactById = catchAsyncService(async (id) => {
-  return await Contact.findById({ _id: id });
-});
+export const getContactById = catchAsyncService((id) =>
+  Contact.findById({ _id: id })
+);
 
-export const addContact = catchAsyncService(async ({ name, email, phone }) => {
-  return await Contact.create({ name, email, phone });
-});
+export const addContact = catchAsyncService(async ({ name, email, phone }) =>
+  Contact.create({ name, email, phone })
+);
 
-export const removeContact = catchAsyncService(async (id) => {
-  return Contact.findByIdAndDelete({ _id: id });
-});
+export const removeContact = catchAsyncService(async (id) =>
+  Contact.findByIdAndDelete({ _id: id })
+);
 
 export const updateContact = catchAsyncService(
-  async ({ id, name, email, phone }) => {
-    return await Contact.findByIdAndUpdate(
+  async ({ id, name, email, phone }) =>
+    Contact.findByIdAndUpdate(
       { _id: id },
       { name, email, phone },
       { new: true }
-    );
-  }
+    )
 );
 
-export const updateStatusContact = catchAsyncService(
-  async ({ id, favorite }) => {
-    return await Contact.findByIdAndUpdate(
-      { _id: id },
-      { favorite },
-      { new: true }
-    );
-  }
+export const updateStatusContact = catchAsyncService(async ({ id, favorite }) =>
+  Contact.findByIdAndUpdate({ _id: id }, { favorite }, { new: true })
 );
