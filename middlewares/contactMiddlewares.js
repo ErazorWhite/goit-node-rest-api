@@ -17,7 +17,11 @@ export const checkCreateContact = catchAsync(async (req, _res, next) => {
   const contactExists = await Contact.exists({ phone: value.phone });
 
   if (contactExists)
-    throw HttpError(409, "Contact with such phone number already exists..");
+    throw HttpError(
+      409,
+      "Contact with such phone number already exists..",
+      errors
+    );
 
   req.body = value;
 
@@ -29,9 +33,16 @@ export const checkUpdateContact = catchAsync(async (req, _res, next) => {
 
   if (errors) throw HttpError(400, "Invalid contact data..", errors);
 
-  const contactExists = await Contact.exists({ phone: req.contact.phone });
-
+  const contactExists = await Contact.exists({ _id: req.contact.id });
   if (!contactExists) throw HttpError(404, errors);
+
+  const phoneExists = await Contact.exists({ phone: req.body.phone });
+  if (phoneExists)
+    throw HttpError(
+      409,
+      "Contact with such phone number already exists..",
+      errors
+    );
 
   req.body = value;
 
