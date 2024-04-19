@@ -6,7 +6,7 @@ export const listContacts = catchAsyncService(async () => {
 });
 
 export const getContactById = catchAsyncService(async (id) => {
-  return await Contact.findOne({ _id: id });
+  return await Contact.findById({ _id: id });
 });
 
 export const addContact = catchAsyncService(async ({ name, email, phone }) => {
