@@ -21,7 +21,6 @@ const contactSchema = new Schema(
     email: {
       type: String,
       validate: [validator.isEmail, "Invalid email address"],
-      unique: true,
     },
     phone: {
       type: String,
