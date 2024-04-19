@@ -21,6 +21,7 @@ const contactSchema = new Schema(
     email: {
       type: String,
       validate: [validator.isEmail, "Invalid email address"],
+      unique: true,
     },
     phone: {
       type: String,
@@ -28,7 +29,8 @@ const contactSchema = new Schema(
         MINPHONE_L,
         `Phone should have at least ${MINPHONE_L} numbers`,
       ],
-      match: Object.values(phoneRegexp), // Matches (XXX) XXX-XXXX OR XXX-XX-XX
+      match: [phoneRegexp.BOTH, "Please fill a valid phone number"], // Matches (XXX) XXX-XXXX OR XXX-XX-XX
+      unique: true,
     },
     favorite: {
       type: Boolean,
@@ -36,8 +38,8 @@ const contactSchema = new Schema(
     },
   },
   {
-    timestamps: true, // Включение меток времени
-    versionKey: false, // Отключение ключа версии
+    timestamps: true,
+    versionKey: false,
   }
 );
 
