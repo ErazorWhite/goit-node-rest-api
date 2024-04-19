@@ -18,7 +18,7 @@ mongoose
     console.log("Database connection successful");
   })
   .catch((err) => {
-    console.log(err);
+    console.error(err);
     process.exit(1);
   });
 
@@ -31,10 +31,9 @@ app.use(express.json());
 
 // ROUTES
 const pathPrefix = "/api/v1";
-
 app.use(`${pathPrefix}/contacts`, contactsRouter);
 
-// handle not found error
+//ERROR HANDLERS
 app.all("*", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
