@@ -7,7 +7,13 @@ import {
   changeContact,
   changeContactStatus,
 } from "../controllers/contactsControllers.js";
-import { checkContactId, checkCreateContact, checkUpdateContact, checkUpdateContactStatus } from "../middlewares/contactMiddlewares.js";
+import { checkContactId } from "../middlewares/contactMiddlewares.js";
+import validateBody from "../helpers/validateBody.js";
+import {
+  createContactSchema,
+  updateContactSchema,
+  updateContactStatusSchema,
+} from "../schemas/contactsSchemas.js";
 
 const contactsRouter = Router();
 
@@ -24,16 +30,16 @@ const contactsRouter = Router();
  */
 
 contactsRouter.get("/", getAllContacts);
-contactsRouter.post("/", checkCreateContact, createContact);
+contactsRouter.post("/", validateBody(createContactSchema), createContact);
 
 contactsRouter.use("/:id", checkContactId);
 
 contactsRouter.get("/:id", getOneContact);
 contactsRouter.delete("/:id", deleteContact);
-contactsRouter.put("/:id", checkUpdateContact, changeContact);
+contactsRouter.put("/:id", validateBody(updateContactSchema), changeContact);
 contactsRouter.patch(
   "/:id/favorite",
-  checkUpdateContactStatus,
+  validateBody(updateContactStatusSchema),
   changeContactStatus
 );
 

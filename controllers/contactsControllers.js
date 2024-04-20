@@ -1,6 +1,8 @@
+import HttpError from "../helpers/HttpError.js";
 import { catchAsync } from "../helpers/catchAsync.js";
 import {
   addContact,
+  getContactById,
   listContacts,
   removeContact,
   updateContact,
@@ -14,16 +16,22 @@ export const getAllContacts = catchAsync(async (_req, res) => {
   });
 });
 
-export const getOneContact = (req, res) => {
-  const contact = req.contact; // from middleware
+export const getOneContact = catchAsync(async (req, res) => {
+  const id = req.params.id
+  const contact = await getContactById(id);
+
+  if (!contact) throw HttpError(404);
+
   res.status(200).json({
     contact,
   });
-};
+});
 
 export const deleteContact = catchAsync(async (req, res) => {
-  const id = req.contact.id; // from middleware
+  const id = req.params.id
   const deleteContact = await removeContact(id);
+
+  if (!deleteContact) throw HttpError(404);
 
   res.status(200).json({
     deleteContact,
@@ -41,11 +49,14 @@ export const createContact = catchAsync(async (req, res) => {
 });
 
 export const changeContact = catchAsync(async (req, res) => {
-  const id = req.contact.id; // from middleware
+  const id = req.params.id;
+
   const updatedContact = await updateContact({
     id,
     ...req.body,
   });
+
+  if (!updatedContact) throw HttpError(404);
 
   res.status(200).json({
     updatedContact,
@@ -53,11 +64,13 @@ export const changeContact = catchAsync(async (req, res) => {
 });
 
 export const changeContactStatus = catchAsync(async (req, res) => {
-  const id = req.contact.id; // from middleware
+  const id = req.params.id;
   const updatedContactStatus = await updateStatusContact({
     id,
     ...req.body,
   });
+
+  if (!updatedContactStatus) throw HttpError(404);
 
   res.status(200).json({
     updatedContactStatus,

@@ -1,11 +1,11 @@
-export const joiValidator = (schema) => (data) => {
-  const { error, value } = schema(data);
+import HttpError from "./HttpError.js";
 
-  if (!error) return { value };
-
-  return {
-    value,
-    errors: error.details.map((err) => err.message),
-  };
+const validateBody = (schema) => (req, _, next) => {
+  const { error } = schema.validate(req.body);
+  if (error) {
+    next(HttpError(400, error.message));
+  }
+  next();
 };
-``
+
+export default validateBody;

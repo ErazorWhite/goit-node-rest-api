@@ -29,7 +29,6 @@ const contactSchema = new Schema(
         `Phone should have at least ${MINPHONE_L} numbers`,
       ],
       match: [phoneRegexp.BOTH, "Please fill a valid phone number"], // Matches (XXX) XXX-XXXX OR XXX-XX-XX
-      unique: true,
     },
     favorite: {
       type: Boolean,
