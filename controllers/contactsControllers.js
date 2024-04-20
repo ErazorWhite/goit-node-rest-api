@@ -17,7 +17,7 @@ export const getAllContacts = catchAsync(async (_req, res) => {
 });
 
 export const getOneContact = catchAsync(async (req, res) => {
-  const id = req.params.id
+  const { id } = req.params;
   const contact = await getContactById(id);
 
   if (!contact) throw HttpError(404);
@@ -28,7 +28,7 @@ export const getOneContact = catchAsync(async (req, res) => {
 });
 
 export const deleteContact = catchAsync(async (req, res) => {
-  const id = req.params.id
+  const { id } = req.params;
   const deleteContact = await removeContact(id);
 
   if (!deleteContact) throw HttpError(404);
@@ -49,7 +49,7 @@ export const createContact = catchAsync(async (req, res) => {
 });
 
 export const changeContact = catchAsync(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   const updatedContact = await updateContact({
     id,
@@ -64,7 +64,7 @@ export const changeContact = catchAsync(async (req, res) => {
 });
 
 export const changeContactStatus = catchAsync(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const updatedContactStatus = await updateStatusContact({
     id,
     ...req.body,
