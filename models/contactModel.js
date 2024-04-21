@@ -30,6 +30,10 @@ const contactSchema = new Schema(
       ],
       match: [phoneRegexp.BOTH, "Please fill a valid phone number"], // Matches (XXX) XXX-XXXX OR XXX-XX-XX
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+    },
     favorite: {
       type: Boolean,
       default: false,
