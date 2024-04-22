@@ -7,7 +7,7 @@ import {
   removeContact,
   updateContact,
   updateStatusContact,
-} from "../services/contactsServices.js";
+} from "../services/contactsService.js";
 
 export const getAllContacts = catchAsync(async (_req, res) => {
   const contactsDB = await listContacts();
