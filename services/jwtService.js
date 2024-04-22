@@ -14,6 +14,6 @@ export const checkToken = (token) => {
 
     return id;
   } catch (error) {
-    throw new HttpError(401);
+    throw HttpError(401);
   }
 };
