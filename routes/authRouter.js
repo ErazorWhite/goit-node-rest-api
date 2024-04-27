@@ -1,7 +1,8 @@
 import { Router } from "express";
 import validateBody from "../helpers/validateBody.js";
-import { registerUserSchema } from "../schemas/userSchemas.js";
-import { registerUser } from "../controllers/userController.js";
+import { loginUserSchema, registerUserSchema } from "../schemas/userSchemas.js";
+import { currentUser, loginUser, registerUser } from "../controllers/userController.js";
+import { protect } from "../middlewares/authMiddlewares.js";
 
 const authRouter = Router();
 
@@ -17,13 +18,10 @@ const authRouter = Router();
  * 
  */
 
-// checkRegisterData, register
 authRouter.post("/register", validateBody(registerUserSchema), registerUser);
-
-// checkLoginData, login
-authRouter.post("/login");
-authRouter.post("/logout");
-authRouter.get("/current");
+authRouter.post("/login", validateBody(loginUserSchema), loginUser);
+authRouter.post("/logout", protect);
+authRouter.get("/current", protect, currentUser);
 authRouter.patch("/");
 
 export default authRouter;
