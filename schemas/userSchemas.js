@@ -12,3 +12,10 @@ export const registerUserSchema = Joi.object()
       )
       .required(),
   });
+
+export const loginUserSchema = Joi.object()
+  .options({ abortEarly: false })
+  .keys({
+    email: Joi.string().email().required(),
+    password: Joi.string().regex(PASSWD_REGEX).message("Anauthorized").required(),
+  });
