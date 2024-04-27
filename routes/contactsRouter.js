@@ -14,6 +14,7 @@ import {
   updateContactSchema,
   updateContactStatusSchema,
 } from "../schemas/contactsSchemas.js";
+import { protect } from "../middlewares/authMiddlewares.js";
 
 const contactsRouter = Router();
 
@@ -28,6 +29,8 @@ const contactsRouter = Router();
  * DELETE       /contacts/<contactId>
  * PATCH        /contacts/<contactId>/favorite
  */
+
+contactsRouter.use(protect);
 
 contactsRouter.get("/", getAllContacts);
 contactsRouter.post("/", validateBody(createContactSchema), createContact);
