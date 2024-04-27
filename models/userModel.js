@@ -41,7 +41,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.method.checkUserPassword = (candidate, passwordHash) =>
+userSchema.methods.checkUserPassword = (candidate, passwordHash) =>
   validatePassword(candidate, passwordHash);
 
 export const User = model("users", userSchema);
