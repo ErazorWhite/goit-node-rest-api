@@ -3,6 +3,7 @@ import { catchAsync } from "../helpers/catchAsync.js";
 import {
   checkUserExistsService,
   loginUserService,
+  logoutUserService,
   registerUserService,
 } from "../services/userService.js";
 
@@ -21,13 +22,23 @@ export const registerUser = catchAsync(async (req, res) => {
 });
 
 export const loginUser = catchAsync(async (req, res) => {
-  const { user, token } = await loginUserService(req.body);
-  if (!user || !token) throw HttpError(401);
+  const loginResult = await loginUserService(req.body);
+  if (!loginResult) throw HttpError(401);
+
+  const { user, token } = loginResult;
 
   res.status(200).json({
     user,
     token,
   });
+});
+
+export const logoutUser = catchAsync(async (req, res) => {
+  const { id } = req.user;
+  const logoutResult = await logoutUserService(id);
+  if (!logoutResult) throw HttpError(401);
+
+  res.status(204).end();
 });
 
 export const currentUser = (req, res) => {
