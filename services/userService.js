@@ -39,3 +39,10 @@ export const logoutUserService = async (id) => {
 };
 
 export const getUserByIdService = (id) => User.findById(id);
+
+export const updateSubscriptionUserService = (id, subscription) =>
+  User.findByIdAndUpdate(
+    { _id: id },
+    { subscription },
+    { new: true, select: "email subscription" }
+  );

@@ -5,6 +5,7 @@ import {
   loginUserService,
   logoutUserService,
   registerUserService,
+  updateSubscriptionUserService,
 } from "../services/userService.js";
 
 export const registerUser = catchAsync(async (req, res) => {
@@ -39,6 +40,20 @@ export const logoutUser = catchAsync(async (req, res) => {
   if (!logoutResult) throw HttpError(401);
 
   res.status(204).end();
+});
+
+export const updateSubscriptionUser = catchAsync(async (req, res) => {
+  const { id } = req.user;
+
+  const newUserSubscription = await updateSubscriptionUserService(
+    id,
+    req.body.subscription
+  );
+  if (!newUserSubscription) throw HttpError(401);
+
+  res.status(201).json({
+    user: newUserSubscription,
+  });
 });
 
 export const currentUser = (req, res) => {

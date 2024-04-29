@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { PASSWD_REGEX } from "../constants/regexp.js";
+import { subscriptionType } from "../constants/customValues.js";
 
 export const registerUserSchema = Joi.object()
   .options({ abortEarly: false })
@@ -17,5 +18,14 @@ export const loginUserSchema = Joi.object()
   .options({ abortEarly: false })
   .keys({
     email: Joi.string().email().required(),
-    password: Joi.string().regex(PASSWD_REGEX).message("Anauthorized").required(),
+    password: Joi.string()
+      .regex(PASSWD_REGEX)
+      .message("Anauthorized")
+      .required(),
   });
+
+export const subscriptionUserSchema = Joi.object().keys({
+  subscription: Joi.string()
+    .valid(...Object.values(subscriptionType))
+    .required(),
+});
