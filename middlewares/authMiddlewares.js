@@ -8,7 +8,7 @@ export const protect = catchAsync(async (req, res, next) => {
     req.headers.authorization?.startsWith("Bearer ") &&
     req.headers.authorization.split(" ")[1];
 
-  const userId = checkToken(token);
+  const userId = await checkToken(token);
   if (!userId) throw HttpError(401);
 
   const currentUser = await getUserByIdService(userId);
