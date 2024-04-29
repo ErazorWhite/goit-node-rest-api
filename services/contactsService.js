@@ -7,8 +7,8 @@ import { catchAsyncService } from "../helpers/catchAsync.js";
  * @author Oleksii
  * @cathegory services
  */
-export const listContacts = catchAsyncService(async () => {
-  return await Contact.find();
+export const listContacts = catchAsyncService((owner) => {
+  return Contact.find({ owner });
 });
 
 /**
@@ -18,9 +18,9 @@ export const listContacts = catchAsyncService(async () => {
  * @author Oleksii
  * @category services
  */
-export const getContactById = catchAsyncService((id) =>
-  Contact.findById({ _id: id })
-);
+export const getContactById = catchAsyncService((id, owner) => {
+  return Contact.findOne({ _id: id, owner });
+});
 
 /**
  * Add contact service
@@ -29,8 +29,8 @@ export const getContactById = catchAsyncService((id) =>
  * @author Oleksii
  * @cathegory services
  */
-export const addContact = catchAsyncService(async ({ name, email, phone }) =>
-  Contact.create({ name, email, phone })
+export const addContact = catchAsyncService(({ name, email, phone }, owner) =>
+  Contact.create({ name, email, phone, owner: owner.id })
 );
 
 /**
@@ -40,8 +40,8 @@ export const addContact = catchAsyncService(async ({ name, email, phone }) =>
  * @author Oleksii
  * @category services
  */
-export const removeContact = catchAsyncService(async (id) =>
-  Contact.findByIdAndDelete({ _id: id })
+export const removeContact = catchAsyncService(async (id, owner) =>
+  Contact.findOneAndDelete({ _id: id, owner })
 );
 
 /**
@@ -52,9 +52,9 @@ export const removeContact = catchAsyncService(async (id) =>
  * @category services
  */
 export const updateContact = catchAsyncService(
-  async ({ id, name, email, phone }) =>
-    Contact.findByIdAndUpdate(
-      { _id: id },
+  async ({ id, name, email, phone, owner }) =>
+    Contact.findOneAndUpdate(
+      { _id: id, owner },
       { name, email, phone },
       { new: true }
     )
@@ -67,6 +67,6 @@ export const updateContact = catchAsyncService(
  * @author Oleksii
  * @category services
  */
-export const updateStatusContact = catchAsyncService(async ({ id, favorite }) =>
-  Contact.findByIdAndUpdate({ _id: id }, { favorite }, { new: true })
+export const updateStatusContact = catchAsyncService(async ({ id, owner, favorite }) =>
+  Contact.findOneAndUpdate({ _id: id, owner }, { favorite }, { new: true })
 );
