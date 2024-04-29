@@ -10,10 +10,11 @@ import {
 } from "../services/contactsService.js";
 
 export const getAllContacts = catchAsync(async (req, res) => {
-  const { id } = req.user;
-  const contactsDB = await listContacts(id);
+  const currentUser = req.user.id;
+  const { contacts, total } = await listContacts(currentUser, req.query);
   res.status(200).json({
-    contactsDB,
+    total,
+    contacts,
   });
 });
 
@@ -42,8 +43,9 @@ export const deleteContact = catchAsync(async (req, res) => {
 });
 
 export const createContact = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const newContact = req.body;
-  const createNewContact = await addContact(newContact, req.user);
+  const createNewContact = await addContact(newContact, currentUser);
   if (!createNewContact) throw HttpError(500, "Can't create user");
 
   res.status(201).json({
