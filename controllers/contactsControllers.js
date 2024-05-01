@@ -7,18 +7,21 @@ import {
   removeContact,
   updateContact,
   updateStatusContact,
-} from "../services/contactsServices.js";
+} from "../services/contactsService.js";
 
-export const getAllContacts = catchAsync(async (_req, res) => {
-  const contactsDB = await listContacts();
+export const getAllContacts = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
+  const { contacts, total } = await listContacts(currentUser, req.query);
   res.status(200).json({
-    contactsDB,
+    total,
+    contacts,
   });
 });
 
 export const getOneContact = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const { id } = req.params;
-  const contact = await getContactById(id);
+  const contact = await getContactById(id, currentUser);
 
   if (!contact) throw HttpError(404);
 
@@ -28,8 +31,9 @@ export const getOneContact = catchAsync(async (req, res) => {
 });
 
 export const deleteContact = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const { id } = req.params;
-  const deleteContact = await removeContact(id);
+  const deleteContact = await removeContact(id, currentUser);
 
   if (!deleteContact) throw HttpError(404);
 
@@ -39,8 +43,9 @@ export const deleteContact = catchAsync(async (req, res) => {
 });
 
 export const createContact = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const newContact = req.body;
-  const createNewContact = await addContact(newContact);
+  const createNewContact = await addContact(newContact, currentUser);
   if (!createNewContact) throw HttpError(500, "Can't create user");
 
   res.status(201).json({
@@ -49,10 +54,12 @@ export const createContact = catchAsync(async (req, res) => {
 });
 
 export const changeContact = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const { id } = req.params;
 
   const updatedContact = await updateContact({
     id,
+    owner: currentUser,
     ...req.body,
   });
 
@@ -64,9 +71,12 @@ export const changeContact = catchAsync(async (req, res) => {
 });
 
 export const changeContactStatus = catchAsync(async (req, res) => {
+  const currentUser = req.user.id;
   const { id } = req.params;
+
   const updatedContactStatus = await updateStatusContact({
     id,
+    owner: currentUser,
     ...req.body,
   });
 

@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 
 import contactsRouter from "./routes/contactsRouter.js";
 import globalErrorHandler from "./middlewares/errorHandler.js";
+import authRouter from "./routes/authRouter.js";
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ app.use(express.json());
 // ROUTES
 const pathPrefix = "/api/v1";
 app.use(`${pathPrefix}/contacts`, contactsRouter);
+app.use(`${pathPrefix}/users`, authRouter);
 
 //ERROR HANDLERS
 app.all("*", (req, res) => {
