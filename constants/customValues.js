@@ -9,3 +9,8 @@ export const subscriptionType = {
 };
 
 export const MB_SIZE = 1024 * 1024;
+
+export const defaultAvatarSize = {
+  WIDTH: 250,
+  HEIGHT: 250,
+};
