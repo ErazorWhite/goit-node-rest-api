@@ -7,3 +7,5 @@ export const subscriptionType = {
   PRO: "pro",
   BUSINESS: "business",
 };
+
+export const MB_SIZE = 1024 * 1024;
