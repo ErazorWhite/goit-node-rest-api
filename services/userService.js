@@ -2,6 +2,7 @@ import { User } from "../models/userModel.js";
 import { catchAsyncService } from "../helpers/catchAsync.js";
 import { signToken } from "./jwtService.js";
 import HttpError from "../helpers/HttpError.js";
+import { ImageService } from "./imageService.js";
 
 export const registerUserService = catchAsyncService(async (userData) => {
   const { email, subscription } = await User.create(userData);
@@ -55,7 +56,17 @@ export const updateSubscriptionUserService = (id, subscription) =>
 export const updateCurrentUserService = catchAsyncService(
   async (user, file) => {
     if (file) {
-      user.avatarURL = file.path.replace("public", "");
+      user.avatarURL = await ImageService.saveImage(
+        file,
+        {
+          maxFileSize: 2,
+          width: 200,
+          height: 200,
+        },
+        "avatars",
+        "users",
+        user.id
+      );
     }
 
     return user.save();
