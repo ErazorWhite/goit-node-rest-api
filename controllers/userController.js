@@ -66,6 +66,6 @@ export const currentUser = (req, res) => {
 export const updateCurrentUser = catchAsync(async (req, res) => {
   const updatedUser = await updateCurrentUserService(req.user, req.file);
   res.status(200).json({
-    user: updatedUser,
+    avatarURL: updatedUser.avatarURL,
   });
 });
