@@ -3,6 +3,7 @@ import { catchAsyncService } from "../helpers/catchAsync.js";
 import { signToken } from "./jwtService.js";
 import HttpError from "../helpers/HttpError.js";
 import { ImageService } from "./imageService.js";
+import { defaultAvatarSize } from "../constants/customValues.js";
 
 export const registerUserService = catchAsyncService(async (userData) => {
   const { email, subscription } = await User.create(userData);
@@ -56,16 +57,16 @@ export const updateSubscriptionUserService = (id, subscription) =>
 export const updateCurrentUserService = catchAsyncService(
   async (user, file) => {
     if (file) {
+      const { WIDTH, HEIGHT } = defaultAvatarSize;
       user.avatarURL = await ImageService.saveImage(
         file,
         {
           maxFileSize: 2,
-          width: 200,
-          height: 200,
+          width: WIDTH,
+          height: HEIGHT,
+          userId: user.id,
         },
-        "avatars",
-        "users",
-        user.id
+        "avatars"
       );
     }
 
