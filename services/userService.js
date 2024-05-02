@@ -11,32 +11,37 @@ export const registerUserService = catchAsyncService(async (userData) => {
 
 export const checkUserExistsService = (email) => User.exists({ email });
 
-export const loginUserService = async ({ email, password }) => {
-  const user = await User.findOne({ email }).select("+password");
-  if (!user) throw HttpError(401);
+export const loginUserService = catchAsyncService(
+  async ({ email, password }) => {
+    const user = await User.findOne({ email }).select("+password");
+    if (!user) throw HttpError(401);
 
-  const isPasswordValid = await user.checkUserPassword(password, user.password);
-  if (!isPasswordValid) throw HttpError(401);
+    const isPasswordValid = await user.checkUserPassword(
+      password,
+      user.password
+    );
+    if (!isPasswordValid) throw HttpError(401);
 
-  const token = signToken(user.id);
+    const token = signToken(user.id);
 
-  user.token = token;
-  await user.save();
+    user.token = token;
+    await user.save();
 
-  return {
-    user: { email: user.email, subscription: user.subscription },
-    token,
-  };
-};
+    return {
+      user: { email: user.email, subscription: user.subscription },
+      token,
+    };
+  }
+);
 
-export const logoutUserService = async (id) => {
+export const logoutUserService = catchAsyncService(async (id) => {
   const deleteToken = await User.findByIdAndUpdate(
     { _id: id },
     { token: null }
   );
 
   return deleteToken;
-};
+});
 
 export const getUserByIdService = (id) => User.findById(id);
 
@@ -46,3 +51,13 @@ export const updateSubscriptionUserService = (id, subscription) =>
     { subscription },
     { new: true, select: "email subscription" }
   );
+
+export const updateCurrentUserService = catchAsyncService(
+  async (user, file) => {
+    if (file) {
+      user.avatarURL = file.path.replace("public", "");
+    }
+
+    return user.save();
+  }
+);
