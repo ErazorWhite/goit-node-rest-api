@@ -10,9 +10,10 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  updateCurrentUser,
   updateSubscriptionUser,
 } from "../controllers/userController.js";
-import { protect } from "../middlewares/authMiddlewares.js";
+import { protect, uploadAvatar } from "../middlewares/authMiddlewares.js";
 
 const authRouter = Router();
 
@@ -30,11 +31,14 @@ const authRouter = Router();
 
 authRouter.post("/register", validateBody(registerUserSchema), registerUser);
 authRouter.post("/login", validateBody(loginUserSchema), loginUser);
-authRouter.post("/logout", protect, logoutUser);
-authRouter.get("/current", protect, currentUser);
+
+authRouter.use(protect);
+
+authRouter.post("/logout", logoutUser);
+authRouter.get("/current", currentUser);
+authRouter.patch("/avatars", uploadAvatar, updateCurrentUser);
 authRouter.patch(
   "/",
-  protect,
   validateBody(subscriptionUserSchema),
   updateSubscriptionUser
 );

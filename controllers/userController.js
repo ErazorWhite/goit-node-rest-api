@@ -5,6 +5,7 @@ import {
   loginUserService,
   logoutUserService,
   registerUserService,
+  updateCurrentUserService,
   updateSubscriptionUserService,
 } from "../services/userService.js";
 
@@ -61,3 +62,10 @@ export const currentUser = (req, res) => {
     user: { email: req.user.email, subscription: req.user.subscription },
   });
 };
+
+export const updateCurrentUser = catchAsync(async (req, res) => {
+  const updatedUser = await updateCurrentUserService(req.user, req.file);
+  res.status(200).json({
+    avatarURL: updatedUser.avatarURL,
+  });
+});

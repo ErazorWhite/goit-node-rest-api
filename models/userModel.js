@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import validator from "validator";
+import gravatar from "gravatar";
 
 import { subscriptionType } from "../constants/customValues.js";
 import { PASSWD_REGEX } from "../constants/regexp.js";
@@ -30,10 +31,14 @@ const userSchema = new Schema({
     type: String,
     default: null,
   },
+  avatarURL: String,
 });
 
 // Pre-save hook fires on "save" and "create" methods
 userSchema.pre("save", async function (next) {
+  if (this.isNew)
+    this.avatarURL = gravatar.url(this.email, { d: "robohash" }, false);
+
   if (!this.isModified("password")) return next();
 
   this.password = await hashPassword(this.password);
