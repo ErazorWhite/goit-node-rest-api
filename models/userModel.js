@@ -32,6 +32,14 @@ const userSchema = new Schema({
     default: null,
   },
   avatarURL: String,
+  verify: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: {
+    type: String,
+    required: [true, "Verify token is required"],
+  },
 });
 
 // Pre-save hook fires on "save" and "create" methods
@@ -43,6 +51,18 @@ userSchema.pre("save", async function (next) {
 
   this.password = await hashPassword(this.password);
 
+  next();
+});
+
+// Middleware that dynamically changes verificationToken validation
+userSchema.pre("validate", function (next) {
+  if (this.verify) {
+    // If the user is verified, remove the requirement for verificationToken
+    this.constructor.schema.path("verificationToken").required(false);
+  } else {
+    // If the user is not verified, leave verificationToken as a required field
+    this.constructor.schema.path("verificationToken").required(true);
+  }
   next();
 });
 
