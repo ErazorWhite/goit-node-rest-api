@@ -3,6 +3,7 @@ import validateBody from "../helpers/validateBody.js";
 import {
   loginUserSchema,
   registerUserSchema,
+  sendVerificationEmailSchema,
   subscriptionUserSchema,
 } from "../schemas/userSchemas.js";
 import {
@@ -10,8 +11,10 @@ import {
   loginUser,
   logoutUser,
   registerUser,
+  resendVerificationEmail,
   updateCurrentUser,
   updateSubscriptionUser,
+  verifyToken,
 } from "../controllers/userController.js";
 import { protect, uploadAvatar } from "../middlewares/authMiddlewares.js";
 
@@ -31,6 +34,9 @@ const authRouter = Router();
 
 authRouter.post("/register", validateBody(registerUserSchema), registerUser);
 authRouter.post("/login", validateBody(loginUserSchema), loginUser);
+
+authRouter.get("/verify/:verificationToken", verifyToken);
+authRouter.post("/verify", validateBody(sendVerificationEmailSchema), resendVerificationEmail);
 
 authRouter.use(protect);
 
