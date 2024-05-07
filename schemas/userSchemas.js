@@ -29,3 +29,7 @@ export const subscriptionUserSchema = Joi.object().keys({
     .valid(...Object.values(subscriptionType))
     .required(),
 });
+
+export const sendVerificationEmailSchema = Joi.object().keys({
+  email: Joi.string().email().required(),
+});
